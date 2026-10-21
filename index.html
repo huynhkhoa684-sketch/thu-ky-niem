@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gửi người từng là tất cả của tui</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0b0c10;
+      --paper-bg: #14171d;
+      --paper-border: rgba(255, 255, 255, 0.08);
+      --accent-gold: #c5a059;
+      --accent-soft: #8e9aaf;
+      --text-main: #dcdfe5;
+      --text-muted: #858b97;
+      --heart-color: #9e4751;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Quicksand', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background: radial-gradient(circle at 50% 20%, #171b24 0%, #0b0c10 80%);
+    }
+
+    .rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+
+    #seal-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      background: radial-gradient(circle at center, #161922 0%, #090a0d 100%);
+      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+      padding: 24px;
+      text-align: center;
+    }
+
+    #seal-screen.opened {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .envelope-box {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2a1518 0%, #15090b 100%);
+      border: 1px solid rgba(197, 160, 89, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 35px rgba(158, 71, 81, 0.25);
+      cursor: pointer;
+      position: relative;
+      animation: pulseGlow 3.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(0.98); box-shadow: 0 0 20px rgba(158, 71, 81, 0.2); }
+      100% { transform: scale(1.03); box-shadow: 0 0 40px rgba(197, 160, 89, 0.35); }
+    }
+
+    .wax-seal {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #8b2635;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ecc880;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0, 0, 0, 0.6);
+      user-select: none;
+    }
+
+    .seal-hint {
+      margin-top: 30px;
+      font-size: 15px;
+      color: var(--accent-soft);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 300;
+      animation: fadeInOut 2.4s infinite;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.95; }
+    }
+
+    .letter-container {
+      position: relative;
+      z-index: 10;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 30px 20px 80px 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.5s ease 0.3s, transform 1.5s ease 0.3s;
+    }
+
+    .letter-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter-paper {
+      background: var(--paper-bg);
+      border: 1px solid var(--paper-border);
+      border-radius: 12px;
+      padding: 36px 24px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      position: relative;
+    }
+
+    .time-stamp {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--accent-soft);
+      text-transform: uppercase;
+      text-align: right;
+      margin-bottom: 24px;
+      opacity: 0.8;
+    }
+
+    .letter-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      line-height: 1.4;
+      color: #f3efe6;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+      padding-bottom: 20px;
+    }
+
+    .letter-content {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      line-height: 1.85;
+      color: #cfd3dc;
+      text-align: justify;
+    }
+
+    .letter-content p {
+      margin-bottom: 18px;
+      text-indent: 20px;
+    }
+
+    .letter-content p.quote-text {
+      text-indent: 0;
+      text-align: center;
+      font-style: italic;
+      color: #ecc880;
+      padding: 12px 10px;
+      border-left: 2px solid var(--accent-gold);
+      border-right: 2px solid var(--accent-gold);
+      background: rgba(197, 160, 89, 0.05);
+      margin: 22px 0;
+    }
+
+    .letter-signature {
+      margin-top: 35px;
+      text-align: right;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--accent-gold);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .polaroid-wrapper {
+      margin: 32px auto;
+      max-width: 290px;
+      background: #ffffff;
+      padding: 12px 12px 30px 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: rotate(-1.5deg);
+      border-radius: 2px;
+      transition: transform 0.4s ease;
+      cursor: pointer;
+    }
+
+    .polaroid-wrapper:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .polaroid-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      background-color: #2b2e36;
+      display: block;
+      filter: sepia(0.2) contrast(0.95);
+    }
+
+    .polaroid-caption {
+      text-align: center;
+      margin-top: 12px;
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      color: #3b3d42;
+      font-style: italic;
+    }
+
+    .interaction-card {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+      text-align: center;
+    }
+
+    .question-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: #e5e8ef;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .btn-choice {
+      padding: 14px 20px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-choice:hover, .btn-choice:active {
+      border-color: var(--accent-gold);
+      background: rgba(197, 160, 89, 0.12);
+      color: #fff;
+    }
+
+    .response-message {
+      margin-top: 24px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      font-size: 15px;
+      color: #d1d5db;
+      line-height: 1.6;
+      display: none;
+      animation: fadeIn 0.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .music-bar {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 100;
+      background: rgba(16, 18, 24, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--accent-soft);
+      cursor: pointer;
+    }
+
+    .music-note-icon {
+      animation: spin 5s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="rainCanvas" class="rain-container"></canvas>
+
+  <div id="seal-screen" onclick="openLetter()">
+    <div class="envelope-box">
+      <div class="wax-seal">K</div>
+    </div>
+    <div class="seal-hint">Chạm để mở lá thư này</div>
+  </div>
+
+  <main class="letter-container" id="mainLetter">
+    <article class="letter-paper">
+      
+      <div class="time-stamp">5 tháng xa nhau</div>
+
+      <h1 class="letter-title">Gửi người từng là tất cả của tui…</h1>
+
+      <div class="polaroid-wrapper" onclick="document.getElementById('photoInput').click()">
+        <img id="displayPhoto" class="polaroid-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%231d2027'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-family='sans-serif' font-size='14'%3EChạm để đổi ảnh kỷ niệm%3C/text%3E%3C/svg%3E" alt="Ảnh kỷ niệm">
+        <div class="polaroid-caption">Những ngày tháng cũ</div>
+        <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+      </div>
+
+      <div class="letter-content">
+        <p>Xin chào, gửi người từng là tất cả của tui.</p>
+        <p>Nhìn vậy mà tui và bạn đã dừng lại cũng được 5 tháng rồi. Nhanh thật ha, mới đó mà chúng ta đã không còn là gì của nhau nữa.</p>
+        
+        <p class="quote-text">“Để mình bù đắp cho bạn nha”</p>
+
+        <p>Từ lúc bạn nói câu ấy, tui đã thật sự rung động. Tui không biết bạn có còn nhớ câu nói ấy không, nhưng với tui, nó từng có ý nghĩa rất đặc biệt. Chẳng hiểu sao chỉ một câu nói đơn giản như vậy thôi mà lại khiến tui cảm thấy được quan tâm, được trân trọng, và có cảm giác rằng cuối cùng cũng có một người muốn làm điều gì đó để tui vui hơn.</p>
+        <p>Lúc ấy, tui đâu có nghĩ rằng người nói câu đó với tui lại trở thành người mà sau này tui phải nhớ nhung nhiều đến vậy.</p>
+        <p>Ít ra, chúng ta dừng lại không phải vì ai phản bội ai, cũng chẳng phải vì có một người thứ ba xen vào giữa hai đứa. Có lẽ điều khiến tui đau lòng nhất chính là cảm giác tui đã đánh mất bạn.</p>
+        <p>Tui không biết phải diễn tả thế nào nữa. Có những chuyện khi còn ở bên nhau, tui cứ nghĩ rằng chỉ cần ngày mai vẫn còn cơ hội thì mọi thứ đều có thể sửa chữa. Tui cứ nghĩ rằng nếu hôm nay có chuyện gì chưa tốt, thì ngày mai tui sẽ làm tốt hơn. Nhưng tui đã không nhận ra rằng có những tổn thương, những thất vọng khi tích tụ đủ lâu sẽ khiến một người dần mệt mỏi và không còn muốn cố gắng nữa.</p>
+        <p>Có lẽ tui đã từng vô tâm vào những lúc bạn cần tui quan tâm. Có lẽ tui đã không hiểu được những điều bạn mong muốn, hoặc đã nghĩ rằng bạn sẽ luôn ở đó, rằng dù có chuyện gì thì chúng ta cũng sẽ tìm được cách quay về bên nhau.</p>
+        <p>Bây giờ bạn đã có người mới rồi, nhưng tui vẫn muốn chờ bạn.</p>
+        <p>Chúng ta đã dừng lại được 5 tháng. Bạn cũng đã bước tiếp trên con đường của mình, có một người mới để quan tâm, để trò chuyện và có lẽ cũng có những niềm vui mới. Còn tui, đôi khi vẫn cứ nhớ về những ngày tháng cũ, nhớ về một người từng khiến tui rung động chỉ bằng một câu nói đơn giản.</p>
+        <p>Tui biết hiện tại tui chẳng còn quyền gì để hỏi bạn hôm nay thế nào, có vui không, có chuyện gì khiến bạn buồn không. Tui cũng chẳng còn là người có thể nhắc nhở bạn ăn uống đầy đủ, hỏi han bạn mỗi ngày hay chúc bạn ngủ ngon trước khi kết thúc một ngày nữa rồi.</p>
+        <p>Những điều từng rất đỗi bình thường khi chúng ta còn bên nhau, bây giờ lại trở thành những điều tui chỉ có thể nhớ lại.</p>
+        <p>Đôi khi tui tự hỏi, không biết người mới của bạn có biết bạn thích gì, ghét gì, có biết những lúc bạn buồn thì nên dỗ dành bạn như thế nào không. Người ấy có khiến bạn cười nhiều không, có quan tâm bạn vào những lúc bạn mệt mỏi không. Tui mong người ấy sẽ làm được những điều mà có lẽ trước đây tui đã không làm tốt.</p>
+        <p>Nói thật, tui cũng buồn khi nghĩ đến việc bạn đang dành những điều từng thuộc về chúng ta cho một người khác. Tui đã từng rất hạnh phúc vì gặp được bạn, và cũng từng rất buồn vì đánh mất bạn.</p>
+        <p>Có lẽ bạn ghét tui, nhưng tui thật sự chưa từng ghét bạn. Dù mọi chuyện đã thay đổi, những cảm xúc tui từng có đều là thật. Tui không muốn phủ nhận những ngày tháng đã qua, cũng không muốn phủ nhận việc bạn từng là một người rất quan trọng đối với tui.</p>
+        <p>Những lần lầm lỗi của tui giờ đây có lẽ đã trở thành những điều khiến bạn tổn thương, khiến bạn thất vọng và chẳng còn muốn nhìn lại nữa. Tui biết có những lời xin lỗi không thể xóa đi những gì đã xảy ra, cũng có những chuyện dù hối hận đến đâu thì cũng chẳng thể quay về như lúc ban đầu.</p>
+        <p>Tui không mong bạn phải tha thứ, cũng không mong bạn quên đi những điều tui đã làm. Tui chỉ muốn bạn biết rằng, dù kết thúc của chúng ta có buồn đến thế nào, tui chưa từng hối hận vì đã gặp bạn.</p>
+        <p>Tui vẫn còn thương bạn. Và nếu sau này vẫn còn cơ hội, tui vẫn muốn được ở bên cạnh bạn một lần nữa, muốn được bù đắp những điều tui đã làm chưa tốt và trân trọng bạn nhiều hơn những ngày tháng trước đây. Tui không biết liệu điều đó có còn cơ hội xảy ra hay không, nhưng nếu được lựa chọn một lần nữa, người mà tui vẫn muốn cùng đi tiếp, chắc chắn vẫn là bạn. Tui không biết tương lai sẽ ra sao, cũng không biết liệu chúng ta còn cơ hội để quay về bên nhau hay không. Nhưng nếu trong lòng vẫn còn một điều mà tui chưa thể buông bỏ, thì đó chính là tình cảm tui dành cho bạn.</p>
+        <p>Cảm ơn bạn vì đã từng là một phần rất đẹp trong cuộc đời tui.</p>
+        <p>Và nếu có thể gửi đến bạn một lời cuối cùng lúc này, tui chỉ muốn nói rằng:</p>
+      </div>
+
+      <div class="letter-signature">
+        Tui vẫn chờ bạn,<br>
+        <strong>Người từng là tất cả của tui</strong>
+      </div>
+
+      <section class="interaction-card">
+        <h2 class="question-title">5 tháng trôi qua rồi... bạn có từng nhớ tui dù chỉ một lần không?</h2>
+        
+        <div class="button-group" id="btnGroup">
+          <button class="btn-choice" onclick="handleChoice('Có, đôi khi tui vẫn nhớ...')">Có, đôi khi tui vẫn nhớ...</button>
+          <button class="btn-choice" onclick="handleChoice('Tui đã quen với cuộc sống hiện tại rồi')">Tui đã quen với cuộc sống hiện tại rồi</button>
+        </div>
+
+        <div id="replyArea" class="response-message"></div>
+      </section>
+
+    </article>
+  </main>
+
+  <div class="music-bar" id="musicBtn" onclick="toggleAudio()">
+    <span class="music-note-icon">🎵</span>
+    <span id="musicStatus">dấu chân</span>
+  </div>
+
+  <audio id="bgTrack" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Đã cấu hình chính xác Bot Token và Chat ID của bạn
+    const TELEGRAM_BOT_TOKEN = "8869679578:AAHgeuZcx4a_qkBWWwg-7Ha2cweV33ZG0ow";
+    const TELEGRAM_CHAT_ID = "7818591436";
+
+    function notifyTelegram(content) {
+      if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' + now.toLocaleDateString('vi-VN');
+      
+      const message = `📬 *THƯ KỶ NIỆM CÓ TƯƠNG TÁC*\n\n` +
+                      `👤 *Hành động:* ${content}\n` +
+                      `⏰ *Thời gian:* ${timeStr}`;
+
+      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+      
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message,
+          parse_mode: "Markdown"
+        })
+      }).catch(err => console.log("Lỗi:", err));
+    }
+
+    function openLetter() {
+      document.getElementById('seal-screen').classList.add('opened');
+      document.getElementById('mainLetter').classList.add('visible');
+      startMusic();
+      notifyTelegram("Người ấy vừa bấm MỞ PHONG BÌ lá thư!");
+    }
+
+    function handleChoice(optionText) {
+      const btnGroup = document.getElementById('btnGroup');
+      const replyArea = document.getElementById('replyArea');
+      
+      btnGroup.style.display = 'none';
+      replyArea.style.display = 'block';
+
+      if (optionText.includes('vẫn nhớ')) {
+        replyArea.innerHTML = '“Cảm ơn bạn vì đã giữ lại một góc nhỏ ký ức về tui... Mong bạn luôn bình yên và hạnh phúc với sự lựa chọn của mình.”';
+      } else {
+        replyArea.innerHTML = '“Tui hiểu rồi. Chỉ cần bạn sống thật tốt và an yên, đó cũng là điều khiến tui an lòng nhất.”';
+      }
+
+      notifyTelegram(`Đã chọn: "${optionText}"`);
+    }
+
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const imgUrl = evt.target.result;
+          document.getElementById('displayPhoto').src = imgUrl;
+          try {
+            localStorage.setItem('memory_photo', imgUrl);
+          } catch(e) {}
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedPhoto = localStorage.getItem('memory_photo');
+      if (savedPhoto) {
+        document.getElementById('displayPhoto').src = savedPhoto;
+      }
+    });
+
+    let audioContext = null;
+    let isSynthRunning = false;
+    const bgAudio = document.getElementById('bgTrack');
+
+    function startMusic() {
+      bgAudio.play().then(() => {
+        document.getElementById('musicStatus').innerText = "dấu chân";
+      }).catch(() => {
+        startAmbientSynth();
+        document.getElementById('musicStatus').innerText = "Giai điệu piano";
+      });
+    }
+
+    function toggleAudio() {
+      if (!bgAudio.paused) {
+        bgAudio.pause();
+        document.getElementById('musicStatus').innerText = "Tắt nhạc";
+      } else if (isSynthRunning) {
+        stopAmbientSynth();
+        document.getElementById('musicStatus').innerText = "Tắt nhạc";
+      } else {
+        startMusic();
+      }
+    }
+
+    function startAmbientSynth() {
+      if (isSynthRunning) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioCtx();
+        isSynthRunning = true;
+
+        const chordNotes = [220.00, 261.63, 329.63, 392.00, 349.23, 440.00];
+        let noteIndex = 0;
+
+        function playChordNote() {
+          if (!isSynthRunning || !audioContext) return;
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(chordNotes[noteIndex % chordNotes.length], audioContext.currentTime);
+
+          gain.gain.setValueAtTime(0, audioContext.currentTime);
+          gain.gain.linearRampToValueAtTime(0.04, audioContext.currentTime + 1.5);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 4.5);
+
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+
+          osc.start();
+          osc.stop(audioContext.currentTime + 4.6);
+
+          noteIndex++;
+          setTimeout(playChordNote, 3200);
+        }
+
+        playChordNote();
+      } catch (e) {}
+    }
+
+    function stopAmbientSynth() {
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+      isSynthRunning = false;
+    }
+
+    const canvas = document.getElementById('rainCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = Array.from({ length: 45 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      speedY: 0.3 + Math.random() * 0.7,
+      size: 1 + Math.random() * 1.5,
+      opacity: 0.1 + Math.random() * 0.4
+    }));
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      
+      particles.forEach(p => {
+        p.y += p.speedY;
+        if (p.y > height) {
+          p.y = 0;
+          p.x = Math.random() * width;
+        }
+        ctx.globalAlpha = p.opacity;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+  </script>
+</body>
+</html>
