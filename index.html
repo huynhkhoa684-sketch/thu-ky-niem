@@ -394,7 +394,7 @@
 
   <div class="music-bar" id="musicBtn" onclick="toggleAudio()">
     <span class="music-note-icon">🎵</span>
-    <span id="musicStatus">dấu chân</span>
+    <span id="musicStatus">Và Em Nói</span>
   </div>
 
   <audio id="bgTrack" loop preload="auto">
@@ -480,7 +480,7 @@
 
     function startMusic() {
       bgAudio.play().then(() => {
-        document.getElementById('musicStatus').innerText = "dấu chân";
+        document.getElementById('musicStatus').innerText = "Và Em Nói";
       }).catch(() => {
         startAmbientSynth();
         document.getElementById('musicStatus').innerText = "Giai điệu piano";
