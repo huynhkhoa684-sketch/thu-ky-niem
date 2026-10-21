@@ -409,7 +409,7 @@
 
   <div class="music-bar" id="musicBtn" onclick="toggleAudio()">
     <span class="music-note-icon">🎵</span>
-    <span id="musicStatus">To nachseol</span>
+    <span id="musicStatus"> EM CỦA ANH ĐỪNG CỦA AI</span>
   </div>
 
   <audio id="bgTrack" loop preload="auto">
@@ -495,7 +495,7 @@ const TELEGRAM_CHAT_ID = "7818591436";
 
     function startMusic() {
       bgAudio.play().then(() => {
-        document.getElementById('musicStatus').innerText = "To nachseol";
+        document.getElementById('musicStatus').innerText = " EM CỦA ANH ĐỪNG CỦA AI";
       }).catch(() => {
         startAmbientSynth();
         document.getElementById('musicStatus').innerText = "Giai điệu piano";
